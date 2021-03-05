@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:book_tickets/select_locations.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_fadein/flutter_fadein.dart';
 
@@ -35,6 +36,7 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
   double _ironManAlignment = -500;
   AnimationController _controller;
   bool animated = false;
+  bool colapse = false;
   bool displayButtons = false;
 
   @override
@@ -64,24 +66,27 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
           AnimatedPositioned(
             duration: Duration(seconds: 3),
             bottom: _ironManAlignment,
-            child: Column(
-              children: [
-                AnimatedBuilder(
-                  animation: _controller,
-                  child: Container(
-                    child: Image.asset(
-                      'assets/images/mars.png',
-                      scale: 0.5,
+            child: Hero(
+              tag: 'MarsImage',
+              child: Column(
+                children: [
+                  AnimatedBuilder(
+                    animation: _controller,
+                    child: Container(
+                      child: Image.asset(
+                        'assets/images/mars.png',
+                        scale: 0.5,
+                      ),
                     ),
+                    builder: (BuildContext context, Widget child) {
+                      return Transform.rotate(
+                        angle: _controller.value * 1,
+                        child: child,
+                      );
+                    },
                   ),
-                  builder: (BuildContext context, Widget child) {
-                    return Transform.rotate(
-                      angle: _controller.value * 1,
-                      child: child,
-                    );
-                  },
-                ),
-              ],
+                ],
+              ),
             ),
           ),
           Padding(
@@ -104,10 +109,14 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
               ],
             ),
           ),
+          colapse?
+              SizedBox():
           Padding(
             padding: const EdgeInsets.only(top: 650.0),
-            child:
-                Align(alignment: Alignment.bottomCenter, child: buildBottons()),
+            child: FadeIn(
+                duration: Duration(seconds: 5),
+                child: Align(
+                    alignment: Alignment.bottomCenter, child: buildBottons())),
           ),
         ],
       ),
@@ -139,7 +148,32 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
             textColor: Colors.white,
             padding: EdgeInsets.only(
                 top: 10.0, bottom: 10.0, right: 50.0, left: 50.0),
-            onPressed: () {},
+            onPressed: () {
+              setState(() {
+                colapse = true;
+              });
+              Navigator.of(context).push(
+                PageRouteBuilder(
+                  transitionDuration: Duration(milliseconds: 3000),
+                  pageBuilder: (BuildContext context,
+                      Animation<double> animation,
+                      Animation<double> secondaryAnimation) {
+                    return SelectLocations();
+                  },
+                  transitionsBuilder: (BuildContext context,
+                      Animation<double> animation,
+                      Animation<double> secondaryAnimation,
+                      Widget child) {
+                    return Align(
+                      child: FadeTransition(
+                        opacity: animation,
+                        child: child,
+                      ),
+                    );
+                  },
+                ),
+              );
+            },
             child: Text(
               "Book Tickets",
               style: TextStyle(
@@ -158,17 +192,23 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
 
   Widget buildAnimatedDefaultTextStyle(String text) {
     return AnimatedDefaultTextStyle(
-      style: animated
+      style: colapse
           ? TextStyle(
               color: Colors.white,
-              fontSize: 70,
+              fontSize: 10,
               fontWeight: FontWeight.bold,
             )
-          : TextStyle(
-              color: Colors.white,
-              fontWeight: FontWeight.bold,
-              fontSize: 120,
-            ),
+          : animated
+              ? TextStyle(
+                  color: Colors.white,
+                  fontSize: 70,
+                  fontWeight: FontWeight.bold,
+                )
+              : TextStyle(
+                  color: Colors.white,
+                  fontWeight: FontWeight.bold,
+                  fontSize: 120,
+                ),
       curve: Curves.easeIn,
       duration: Duration(seconds: 3),
       child: Text(
@@ -188,5 +228,10 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
     setState(() {
       displayButtons = true;
     });
+  }
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
   }
 }
