@@ -1,5 +1,9 @@
+import 'package:auto_animated/auto_animated.dart';
+import 'package:book_tickets/model/details.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+
+import 'book_seats.dart';
 
 class LocationDetailsScreen extends StatefulWidget {
   @override
@@ -8,22 +12,33 @@ class LocationDetailsScreen extends StatefulWidget {
 
 class _LocationDetailsState extends State<LocationDetailsScreen> {
   var imagesList = List<String>();
+  var detailsList = List<Details>();
+
+  final options = LiveOptions(
+    delay: Duration(microseconds: 500),
+    showItemInterval: Duration(milliseconds: 300),
+    showItemDuration: Duration(microseconds: 500),
+    visibleFraction: 0.05,
+    reAnimateOnVisibility: false,
+  );
+  final scrollController = ScrollController();
+  final int listItemCount = 4;
+  final listShowItemDuration = Duration(milliseconds: 250);
 
   @override
   void initState() {
     super.initState();
-    imagesList.add(
-        "https://upload.wikimedia.org/wikipedia/commons/d/dc/PIA17944-MarsCuriosityRover-AfterCrossingDingoGapSanddune-20140209.jpg");
-    imagesList.add(
-        "https://www.nasa.gov/sites/default/files/styles/image_card_4x3_ratio/public/thumbnails/image/pia21044_orig.jpg");
-    imagesList.add(
-        "https://www.nasa.gov/sites/default/files/styles/image_card_4x3_ratio/public/thumbnails/image/pia21716.jpg");
-    imagesList.add(
-        "https://upload.wikimedia.org/wikipedia/commons/d/dc/PIA17944-MarsCuriosityRover-AfterCrossingDingoGapSanddune-20140209.jpg");
-    imagesList.add(
-        "https://www.nasa.gov/sites/default/files/styles/image_card_4x3_ratio/public/thumbnails/image/pia21044_orig.jpg");
-    imagesList.add(
-        "https://www.nasa.gov/sites/default/files/styles/image_card_4x3_ratio/public/thumbnails/image/pia21716.jpg");
+    imagesList.add("assets/images/image1.jpeg");
+    imagesList.add("assets/images/images2.jpeg");
+    imagesList.add("assets/images/image3.jpeg");
+    imagesList.add("assets/images/images4.jpeg");
+    imagesList.add("assets/images/images5.jpeg");
+    detailsList.add(Details(title: "Degrees", value: "-63" + "\u00B0"));
+    detailsList.add(Details(title: "Ration Km", value: "3.389"));
+    detailsList.add(Details(title: "Dist Mil. km", value: "225"));
+    detailsList.add(Details(title: "Lorem", value: "345"));
+    detailsList.add(Details(title: "Ipsum", value: "1.245"));
+    detailsList.add(Details(title: "Hi Mam", value: "54"));
   }
 
   @override
@@ -114,7 +129,7 @@ class _LocationDetailsState extends State<LocationDetailsScreen> {
                                               BorderRadius.circular(0),
                                         ),
                                         color: Colors.transparent,
-                                        child: Image.network(
+                                        child: Image.asset(
                                           imagesList[index],
                                           width: 150,
                                           fit: BoxFit.fitHeight,
@@ -161,6 +176,69 @@ class _LocationDetailsState extends State<LocationDetailsScreen> {
                           ],
                         ),
                       ),
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: SizedBox(
+                          height: 260,
+                          child: CustomScrollView(
+                            controller: scrollController,
+                            slivers: <Widget>[
+                              LiveSliverGrid(
+                                controller: scrollController,
+                                itemCount: detailsList.length,
+                                itemBuilder: buildAnimatedItem,
+                                gridDelegate:
+                                    SliverGridDelegateWithFixedCrossAxisCount(
+                                  crossAxisCount: 3,
+                                  crossAxisSpacing: 2,
+                                  mainAxisSpacing: 2,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                      FlatButton(
+                        shape: RoundedRectangleBorder(
+                            side: BorderSide(color: Colors.white)),
+                        color: Colors.white,
+                        textColor: Colors.white,
+                        padding: EdgeInsets.only(
+                            top: 10.0, bottom: 10.0, right: 50.0, left: 50.0),
+                        onPressed: () {
+                          Navigator.of(context).push(
+                            PageRouteBuilder(
+                              transitionDuration: Duration(milliseconds: 100),
+                              pageBuilder: (BuildContext context,
+                                  Animation<double> animation,
+                                  Animation<double> secondaryAnimation) {
+                                return BookSeatsScreen();
+                              },
+                              transitionsBuilder: (BuildContext context,
+                                  Animation<double> animation,
+                                  Animation<double> secondaryAnimation,
+                                  Widget child) {
+                                return Align(
+                                  child: FadeTransition(
+                                    opacity: animation,
+                                    child: child,
+                                  ),
+                                );
+                              },
+                            ),
+                          );
+                        },
+                        child: Text(
+                          "Book Seats Now",
+                          style: TextStyle(
+                              fontSize: 18.0,
+                              color: Colors.black,
+                              fontWeight: FontWeight.bold),
+                        ),
+                      ),
+                      SizedBox(
+                        height: 30.0,
+                      )
                     ],
                   ),
                 ),
@@ -171,4 +249,59 @@ class _LocationDetailsState extends State<LocationDetailsScreen> {
       ),
     );
   }
+
+  Widget buildAnimatedItem(
+    BuildContext context,
+    int index,
+    Animation<double> animation,
+  ) =>
+      FadeTransition(
+        opacity: Tween<double>(
+          begin: 0,
+          end: 1,
+        ).animate(animation),
+        // And slide transition
+        child: SlideTransition(
+          position: Tween<Offset>(
+            begin: Offset(0, -0.1),
+            end: Offset.zero,
+          ).animate(animation),
+          // Paste you Widget
+          child: Card(
+              color: Colors.transparent,
+              shape: RoundedRectangleBorder(
+                side: BorderSide(color: Colors.white, width: 1),
+                borderRadius: BorderRadius.circular(10),
+              ),
+              child: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  children: [
+                    Row(
+                      children: [
+                        Text(
+                          detailsList[index].title,
+                          style: TextStyle(
+                              color: Colors.white,
+                              fontWeight: FontWeight.w600,
+                              fontSize: 15.0),
+                        ),
+                      ],
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      children: [
+                        Text(detailsList[index].value,
+                            style: TextStyle(
+                                color: Colors.white,
+                                fontWeight: FontWeight.bold,
+                                fontSize: 35.0)),
+                      ],
+                    ),
+                  ],
+                ),
+              )),
+        ),
+      );
 }

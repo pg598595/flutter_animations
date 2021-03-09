@@ -109,9 +109,9 @@ class _SelectLocationsState extends State<SelectLocations> {
                       child: Positioned(
                           top: 100, left: 140, child: buildPinIcon())),
                   Positioned(top: 200, left: 160, child: buildPinIcon()),
-                  Positioned(top: 180, left: 300, child: buildPinIcon()),
-                  Positioned(top: 250, left: 200, child: buildPinIcon()),
-                  Positioned(top: 80, left: 250, child: buildPinIcon()),
+                  Positioned(top: 180, left: 80, child: buildPinIcon()),
+                  Positioned(top: 250, left: 230, child: buildPinIcon()),
+                  Positioned(top: 100, left: 200, child: buildPinIcon()),
 
                   // ImageMap(
                   //     imagePath: 'assets/images/transparentImage.png',
