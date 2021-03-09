@@ -109,15 +109,16 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
               ],
             ),
           ),
-          colapse?
-              SizedBox():
-          Padding(
-            padding: const EdgeInsets.only(top: 650.0),
-            child: FadeIn(
-                duration: Duration(seconds: 5),
-                child: Align(
-                    alignment: Alignment.bottomCenter, child: buildBottons())),
-          ),
+          colapse
+              ? SizedBox()
+              : Padding(
+                  padding: const EdgeInsets.only(top: 650.0),
+                  child: FadeIn(
+                      duration: Duration(seconds: 5),
+                      child: Align(
+                          alignment: Alignment.bottomCenter,
+                          child: buildBottons())),
+                ),
         ],
       ),
     );
@@ -229,6 +230,7 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
       displayButtons = true;
     });
   }
+
   @override
   void dispose() {
     _controller.dispose();
