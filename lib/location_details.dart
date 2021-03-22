@@ -94,7 +94,7 @@ class _LocationDetailsState extends State<LocationDetailsScreen> {
                   child: Column(
                     children: [
                       SizedBox(
-                        height: 250.0,
+                        height: 220.0,
                       ),
                       Padding(
                         padding: const EdgeInsets.only(top: 35.0, left: 15.0),
